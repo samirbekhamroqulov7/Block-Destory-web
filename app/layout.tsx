@@ -1,24 +1,22 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react"
+import { GeistSans } from "geist/font/sans"
+import { GeistMono } from "geist/font/mono"
 import "./globals.css"
 
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
-
 export const metadata: Metadata = {
-  title: "Block Description - Break Blocks Game",
+  title: "Block Destroy - Break Blocks Game",
   description:
-    "An addictive block breaker game with dynamic colors and progressive difficulty. Play Block Description online now!",
-  keywords: ["block breaker", "game", "block description", "puzzle", "arcade"],
-  authors: [{ name: "Block Description" }],
+    "An addictive block breaker game with dynamic colors and progressive difficulty. Play Block Destroy online now!",
+  keywords: ["block breaker", "game", "block destroy", "puzzle", "arcade"],
+  authors: [{ name: "Block Destroy" }],
   generator: "v0.app",
-  applicationName: "Block Description",
+  applicationName: "Block Destroy",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Block Description",
+    title: "Block Destroy",
   },
   formatDetection: {
     telephone: false,
@@ -47,14 +45,14 @@ export const metadata: Metadata = {
     apple: "/apple-icon.png",
   },
   openGraph: {
-    title: "Block Description - Break Blocks Game",
+    title: "Block Destroy - Break Blocks Game",
     description: "An addictive block breaker game with dynamic colors and progressive difficulty",
     type: "website",
-    siteName: "Block Description",
+    siteName: "Block Destroy",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Block Description",
+    title: "Block Destroy",
     description: "Play the ultimate block breaker game",
   },
 }
@@ -65,14 +63,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <head>
         <meta name="theme-color" content="#0f172a" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
-      <body className={`font-sans antialiased`}>
+      <body className="font-sans antialiased">
         {children}
         <Analytics />
       </body>
