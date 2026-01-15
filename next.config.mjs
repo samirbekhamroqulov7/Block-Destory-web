@@ -1,15 +1,10 @@
-/** @type {import('next').NextConfig} */
+﻿/** @type {import('next').NextConfig} */
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  reactStrictMode: true,
+  swcMinify: true,
   images: {
     unoptimized: true,
-  },
-  output: 'standalone',
+  }
 }
 
 export default nextConfig

@@ -1,8 +1,8 @@
-"use client"
+﻿"use client"
 
 import { useState, useEffect, useRef } from "react"
 import { View, Text, TouchableOpacity, Dimensions, StyleSheet, PanResponder } from "react-native"
-import { GameEngine, getBlockColor, GRID_WIDTH, GRID_HEIGHT } from "../gameEngine"
+import { GameEngine, getBlockColor, GRID_WIDTH, GRID_HEIGHT } from "@/lib/gameEngine"
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window")
 
@@ -314,3 +314,4 @@ const styles = StyleSheet.create({
 })
 
 export default GameScreen
+

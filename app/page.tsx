@@ -1,9 +1,9 @@
-"use client"
+﻿"use client"
 
 import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
-import { GameEngine, getBlockColor, GRID_WIDTH, GRID_HEIGHT } from "../gameEngine"
+import { GameEngine, getBlockColor, GRID_WIDTH, GRID_HEIGHT } from "@/lib/gameEngine"
 
 export default function GamePage() {
   const [gameEngine] = useState(() => new GameEngine())
@@ -182,3 +182,4 @@ export default function GamePage() {
     </div>
   )
 }
+
