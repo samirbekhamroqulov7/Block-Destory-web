@@ -10,9 +10,35 @@ export default function GamePage() {
   const [gameState, setGameState] = useState(gameEngine)
   const [highScore, setHighScore] = useState(0)
   const [mouseX, setMouseX] = useState(0.5)
+  const [dimensions, setDimensions] = useState({
+    width: 600,
+    height: 720,
+    blockWidth: 600 / GRID_WIDTH,
+    blockHeight: 720 / GRID_HEIGHT
+  })
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationRef = useRef<number>()
   const lastTimeRef = useRef(Date.now())
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const updateDimensions = () => {
+        const width = Math.min(600, window.innerWidth * 0.95)
+        const height = width * 1.2
+        setDimensions({
+          width,
+          height,
+          blockWidth: width / GRID_WIDTH,
+          blockHeight: height / GRID_HEIGHT
+        })
+      }
+
+      updateDimensions()
+      window.addEventListener('resize', updateDimensions)
+      
+      return () => window.removeEventListener('resize', updateDimensions)
+    }
+  }, [])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
@@ -57,11 +83,6 @@ export default function GamePage() {
     setGameState({ ...gameEngine })
   }
 
-  const gameAreaWidth = Math.min(600, window.innerWidth * 0.95)
-  const gameAreaHeight = gameAreaWidth * 1.2
-  const blockWidth = gameAreaWidth / GRID_WIDTH
-  const blockHeight = gameAreaHeight / GRID_HEIGHT
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 flex flex-col items-center justify-start pt-6 px-4">
       {/* Header Decorative Line */}
@@ -104,8 +125,8 @@ export default function GamePage() {
         onTouchMove={handleTouchMove}
         className="relative bg-slate-900 border-4 border-cyan-400 rounded-2xl overflow-hidden shadow-2xl shadow-cyan-400/30 cursor-none"
         style={{
-          width: gameAreaWidth,
-          height: gameAreaHeight,
+          width: dimensions.width,
+          height: dimensions.height,
         }}
       >
         {/* Blocks */}
@@ -114,10 +135,10 @@ export default function GamePage() {
             key={block.id}
             className="absolute rounded-xl flex items-center justify-center font-bold text-white shadow-lg transition-transform hover:scale-105"
             style={{
-              left: (block.x / GRID_WIDTH) * gameAreaWidth,
-              top: (block.y / GRID_HEIGHT) * gameAreaHeight,
-              width: blockWidth - 4,
-              height: blockHeight - 4,
+              left: (block.x / GRID_WIDTH) * dimensions.width,
+              top: (block.y / GRID_HEIGHT) * dimensions.height,
+              width: dimensions.blockWidth - 4,
+              height: dimensions.blockHeight - 4,
               backgroundColor: getBlockColor(block.health),
               boxShadow: `0 4px 12px rgba(0, 0, 0, 0.5), 0 0 8px ${getBlockColor(block.health)}40`,
             }}
@@ -133,8 +154,8 @@ export default function GamePage() {
             key={idx}
             className="absolute rounded-full bg-white shadow-lg"
             style={{
-              left: ball.x * gameAreaWidth - 6,
-              top: ball.y * gameAreaHeight - 6,
+              left: ball.x * dimensions.width - 6,
+              top: ball.y * dimensions.height - 6,
               width: 12,
               height: 12,
               boxShadow: "0 0 12px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.5)",
@@ -146,9 +167,9 @@ export default function GamePage() {
         <div
           className="absolute rounded-full bg-cyan-400 shadow-lg transition-all"
           style={{
-            left: gameState.paddle.x * gameAreaWidth,
-            width: gameState.paddle.width * gameAreaWidth,
-            top: gameAreaHeight - 25,
+            left: gameState.paddle.x * dimensions.width,
+            width: gameState.paddle.width * dimensions.width,
+            top: dimensions.height - 25,
             height: 20,
             boxShadow: "0 0 20px rgba(77, 208, 225, 0.8), 0 0 30px rgba(77, 208, 225, 0.5)",
           }}
@@ -182,4 +203,3 @@ export default function GamePage() {
     </div>
   )
 }
-
