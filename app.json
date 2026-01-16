@@ -17,8 +17,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.yourcompany.brickbreakermobile",
-      "buildNumber": "1.0.0",
-      "requireFullScreen": true
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,8 +25,11 @@
         "backgroundColor": "#1A1A2E"
       },
       "package": "com.yourcompany.brickbreakermobile",
-      "versionCode": 1,
-      "softwareKeyboardLayoutMode": "pan"
+      "versionCode": 1
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
     },
     "plugins": [
       "expo-build-properties",
@@ -37,6 +39,14 @@
       "eas": {
         "projectId": "your-project-id"
       }
-    }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/your-project-id"
+    },
+    "newArchEnabled": false,
+    "owner": "your-username"
   }
 }
