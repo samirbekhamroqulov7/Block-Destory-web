@@ -46,7 +46,7 @@ export function random(min: number, max: number): number {
 }
 
 export function randomInt(min: number, max: number): number {
-  return Math.floor(random(min, max));
+  return Math.floor(Math.random() * (max - min) + min);
 }
 
 // Проверка пересечения

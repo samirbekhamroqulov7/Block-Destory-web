@@ -28,9 +28,23 @@ const START_LINE_Y = 480;
 const LAUNCHER_X = GAME_WIDTH / 2;
 const LAUNCHER_Y = START_LINE_Y + 60;
 
+// Добавляем тип для GameState если его нет в gameLogic.ts
+interface LocalGameState {
+  level: number;
+  score: number;
+  record: number;
+  ballsCount: number;
+  gameStatus: 'aiming' | 'shooting' | 'movingBlocks' | 'gameOver' | 'paused';
+  blocks: Block[];
+  balls: Ball[];
+  comboCount: number;
+  comboMultiplier: number;
+  lastScoreTime: number;
+}
+
 export default function Game() {
   // Состояние игры
-  const [gameState, setGameState] = useState<GameState>({
+  const [gameState, setGameState] = useState<LocalGameState>({
     level: 1,
     score: 0,
     record: 0,

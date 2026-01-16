@@ -1,4 +1,4 @@
-import { getBlockColor } from './utils';
+import { getBlockColor, randomInt } from './utils';
 
 export type BlockType = 'normal' | 'bomb' | 'vertical' | 'horizontal' | 'diagonal';
 

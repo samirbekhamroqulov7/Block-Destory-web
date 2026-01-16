@@ -36,6 +36,8 @@ export function calculateScore(
     case 'diagonal':
       score = (block.originalLayers || block.layers) * 7;
       break;
+    default:
+      score = block.layers;
   }
   
   // Бонус за комбо
@@ -43,7 +45,7 @@ export function calculateScore(
     score += comboCount * 10 * comboMultiplier;
   }
   
-  return score;
+  return Math.floor(score);
 }
 
 // Активация бомбы-блока
@@ -73,18 +75,13 @@ export function activateBombBlock(
       if (updatedBlocks[index].layers <= 0) {
         updatedBlocks[index].isDestroyed = true;
         affectedBlocks.push(updatedBlocks[index]);
-        
-        // Если это бомба, активируем цепную реакцию
-        if (updatedBlocks[index].type === 'bomb') {
-          const result = activateBombBlock(updatedBlocks[index], updatedBlocks);
-          updatedBlocks.splice(0, updatedBlocks.length, ...result.updatedBlocks);
-          affectedBlocks.push(...result.affectedBlocks);
-        }
       }
       
-      // Убираем эффект попадания
+      // Убираем эффект попадания через 200мс
       setTimeout(() => {
-        updatedBlocks[index].isHit = false;
+        if (index < updatedBlocks.length) {
+          updatedBlocks[index].isHit = false;
+        }
       }, 200);
     }
   });
@@ -115,17 +112,12 @@ export function activateVerticalLaser(
       if (updatedBlocks[index].layers <= 0) {
         updatedBlocks[index].isDestroyed = true;
         affectedBlocks.push(updatedBlocks[index]);
-        
-        // Проверяем специальные блоки для цепной реакции
-        if (updatedBlocks[index].type === 'bomb') {
-          const result = activateBombBlock(updatedBlocks[index], updatedBlocks);
-          updatedBlocks.splice(0, updatedBlocks.length, ...result.updatedBlocks);
-          affectedBlocks.push(...result.affectedBlocks);
-        }
       }
       
       setTimeout(() => {
-        updatedBlocks[index].isHit = false;
+        if (index < updatedBlocks.length) {
+          updatedBlocks[index].isHit = false;
+        }
       }, 200);
     }
   });
@@ -156,17 +148,12 @@ export function activateHorizontalLaser(
       if (updatedBlocks[index].layers <= 0) {
         updatedBlocks[index].isDestroyed = true;
         affectedBlocks.push(updatedBlocks[index]);
-        
-        // Проверяем специальные блоки для цепной реакции
-        if (updatedBlocks[index].type === 'bomb') {
-          const result = activateBombBlock(updatedBlocks[index], updatedBlocks);
-          updatedBlocks.splice(0, updatedBlocks.length, ...result.updatedBlocks);
-          affectedBlocks.push(...result.affectedBlocks);
-        }
       }
       
       setTimeout(() => {
-        updatedBlocks[index].isHit = false;
+        if (index < updatedBlocks.length) {
+          updatedBlocks[index].isHit = false;
+        }
       }, 200);
     }
   });
@@ -197,17 +184,12 @@ export function activateDiagonalLaser(
       if (updatedBlocks[index].layers <= 0) {
         updatedBlocks[index].isDestroyed = true;
         affectedBlocks.push(updatedBlocks[index]);
-        
-        // Проверяем специальные блоки для цепной реакции
-        if (updatedBlocks[index].type === 'bomb') {
-          const result = activateBombBlock(updatedBlocks[index], updatedBlocks);
-          updatedBlocks.splice(0, updatedBlocks.length, ...result.updatedBlocks);
-          affectedBlocks.push(...result.affectedBlocks);
-        }
       }
       
       setTimeout(() => {
-        updatedBlocks[index].isHit = false;
+        if (index < updatedBlocks.length) {
+          updatedBlocks[index].isHit = false;
+        }
       }, 200);
     }
   });
@@ -234,18 +216,28 @@ export function checkGameOver(blocks: Block[]): boolean {
 export function saveRecord(score: number): boolean {
   if (typeof window === 'undefined') return false;
   
-  const saved = localStorage.getItem('blockDestroyRecord');
-  if (!saved || score > parseInt(saved)) {
-    localStorage.setItem('blockDestroyRecord', score.toString());
-    return true;
+  try {
+    const saved = localStorage.getItem('blockDestroyRecord');
+    if (!saved || score > parseInt(saved)) {
+      localStorage.setItem('blockDestroyRecord', score.toString());
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('Error saving record:', error);
+    return false;
   }
-  return false;
 }
 
 // Загрузка рекорда
 export function loadRecord(): number {
   if (typeof window === 'undefined') return 0;
   
-  const saved = localStorage.getItem('blockDestroyRecord');
-  return saved ? parseInt(saved) : 0;
+  try {
+    const saved = localStorage.getItem('blockDestroyRecord');
+    return saved ? parseInt(saved) : 0;
+  } catch (error) {
+    console.error('Error loading record:', error);
+    return 0;
+  }
 }
