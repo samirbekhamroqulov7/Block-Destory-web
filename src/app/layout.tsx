@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import '../styles/globals.css'
+import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Brick Breaker Game',
-  description: 'Простая игра в стиле Brick Breaker',
+  title: 'Block Destroy - Aim & Shoot Brick Breaker',
+  description: 'A unique aim and shoot brick breaker game with special blocks and chain reactions',
 }
 
 export default function RootLayout({
@@ -15,11 +15,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ru">
+    <html lang="en">
       <body className={inter.className}>
-        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
-          {children}
-        </div>
+        {children}
       </body>
     </html>
   )
