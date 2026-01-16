@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import GameBoard from '../src/components/GameBoard';
 import GameUI from '../src/components/GameUI';
 import Ball from '../src/components/Ball';
@@ -10,8 +10,7 @@ import { useGameLogic } from '../src/hooks/useGameLogic';
 
 export default function Home() {
   const deviceInfo = useDeviceDetection();
-  const gameRef = useRef<HTMLDivElement>(null);
-  const [gameActive, setGameActive] = useState(false);
+  const gameContainerRef = useRef<HTMLDivElement>(null);
 
   const {
     gameState,
@@ -24,80 +23,73 @@ export default function Home() {
     movePaddle,
   } = useGameLogic(deviceInfo);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!gameRef.current || !gameActive) return;
-    
-    const rect = gameRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    movePaddle(x, rect.width);
-  }, [gameActive, movePaddle]);
-
   useEffect(() => {
-    if (gameActive) {
-      window.addEventListener('mousemove', handleMouseMove);
-    }
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!gameContainerRef.current || !gameState.isGameStarted || gameState.isPaused) return;
+      
+      const rect = gameContainerRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      movePaddle(x, rect.width);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
     
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [gameActive, handleMouseMove]);
+  }, [gameState.isGameStarted, gameState.isPaused, movePaddle]);
+
+  const handleExit = () => {
+    if (typeof window !== 'undefined') {
+      window.history.back();
+    }
+  };
 
   return (
-    <div ref={gameRef}>
+    <div ref={gameContainerRef}>
       <GameBoard deviceInfo={deviceInfo}>
-        {/* Кирпичи */}
         {bricks.map(brick => (
           <Brick key={brick.id} brick={brick} />
         ))}
         
-        {/* Мяч */}
-        <Ball position={ballPosition} size={20} />
+        <Ball position={ballPosition} size={deviceInfo.isTablet ? 24 : 20} />
         
-        {/* Платформа */}
         <div
           style={{
             position: 'absolute',
-            left: `${paddlePosition.x - 75}px`,
-            top: `${paddlePosition.y - 10}px`,
-            width: '150px',
-            height: '20px',
+            left: `${paddlePosition.x - (deviceInfo.isTablet ? 100 : 75)}px`,
+            top: `${paddlePosition.y - (deviceInfo.isTablet ? 12 : 10)}px`,
+            width: `${deviceInfo.isTablet ? 200 : 150}px`,
+            height: `${deviceInfo.isTablet ? 25 : 20}px`,
             backgroundColor: '#4ECDC4',
             borderRadius: '10px',
             border: '2px solid #fff',
             boxShadow: '0 2px 5px rgba(0,0,0,0.25)',
+            transition: 'left 0.1s ease-out',
           }}
         />
       </GameBoard>
       
       <GameUI
         gameState={gameState}
-        onStart={() => {
-          startGame();
-          setGameActive(true);
-        }}
-        onPause={() => {
-          pauseGame();
-          setGameActive(!gameState.isPaused);
-        }}
-        onReset={() => {
-          resetGame(window.innerWidth, window.innerHeight);
-          setGameActive(false);
-        }}
-        onExit={() => window.history.back()}
+        onStart={startGame}
+        onPause={pauseGame}
+        onReset={resetGame}
+        onExit={handleExit}
         deviceInfo={deviceInfo}
       />
       
       <div style={{
         position: 'absolute',
         bottom: '20px',
-        left: '20px',
+        left: 0,
+        right: 0,
+        textAlign: 'center',
         color: 'rgba(255,255,255,0.7)',
-        fontSize: '14px',
+        fontSize: deviceInfo.isTablet ? '16px' : '14px',
+        padding: '10px',
       }}>
-        {deviceInfo.isTablet 
-          ? 'Используйте мышь для управления' 
-          : 'Двигайте мышью для управления платформой'
-        }
+        Двигайте мышью для управления платформой
       </div>
     </div>
   );
