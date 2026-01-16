@@ -1,26 +1,24 @@
-import React from 'react';
-import { Brick as BrickType } from '../types/gameTypes';
-
 interface BrickProps {
-  brick: BrickType;
+  x: number
+  y: number
+  width: number
+  height: number
 }
 
-const Brick: React.FC<BrickProps> = ({ brick }) => {
+export default function Brick({ x, y, width, height }: BrickProps) {
   return (
-    <div
-      style={{
-        position: 'absolute',
-        left: `${brick.position.x}px`,
-        top: `${brick.position.y}px`,
-        width: `${brick.size.width}px`,
-        height: `${brick.size.height}px`,
-        backgroundColor: brick.color,
-        opacity: brick.health > 0 ? 1 : 0,
-        borderRadius: '4px',
-        border: '1px solid #fff',
-      }}
-    />
-  );
-};
-
-export default Brick;
+    <div className="absolute">
+      <div 
+        className="bg-gradient-to-r from-green-500 to-emerald-600 rounded shadow-lg border border-emerald-700"
+        style={{
+          width: `${width}px`,
+          height: `${height}px`,
+          transform: `translate(${x}px, ${y}px)`,
+          position: 'fixed',
+          left: 0,
+          top: 0,
+        }}
+      />
+    </div>
+  )
+}

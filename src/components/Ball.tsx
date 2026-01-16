@@ -1,26 +1,24 @@
-import React from 'react';
-import { Position } from '../types/gameTypes';
+import { BALL_SIZE } from '@/lib/gameUtils'
 
 interface BallProps {
-  position: Position;
-  size: number;
+  x: number
+  y: number
 }
 
-const Ball: React.FC<BallProps> = ({ position, size }) => {
+export default function Ball({ x, y }: BallProps) {
   return (
-    <div
-      style={{
-        position: 'absolute',
-        left: `${position.x - size / 2}px`,
-        top: `${position.y - size / 2}px`,
-        width: `${size}px`,
-        height: `${size}px`,
-        backgroundColor: '#FF6B6B',
-        borderRadius: '50%',
-        boxShadow: '0 2px 5px rgba(0,0,0,0.25)',
-      }}
-    />
-  );
-};
-
-export default Ball;
+    <div className="absolute">
+      <div 
+        className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full shadow-lg"
+        style={{
+          width: `${BALL_SIZE}px`,
+          height: `${BALL_SIZE}px`,
+          transform: `translate(${x}px, ${y}px)`,
+          position: 'fixed',
+          left: 0,
+          top: 0,
+        }}
+      />
+    </div>
+  )
+}
