@@ -9,20 +9,19 @@ export const useGameLoop = (callback: () => void, interval: number = 16) => {
     if (previousTimeRef.current === undefined) {
       previousTimeRef.current = time;
     }
-    
+
     const deltaTime = time - previousTimeRef.current;
-    
+
     if (deltaTime >= interval && !isPausedRef.current) {
       previousTimeRef.current = time;
       callback();
     }
-    
+
     requestRef.current = requestAnimationFrame(animate);
   };
 
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate);
-    
     return () => {
       if (requestRef.current) {
         cancelAnimationFrame(requestRef.current);
@@ -30,23 +29,10 @@ export const useGameLoop = (callback: () => void, interval: number = 16) => {
     };
   }, []);
 
-  const pause = () => {
-    isPausedRef.current = true;
-  };
-
-  const resume = () => {
-    isPausedRef.current = false;
-    previousTimeRef.current = undefined;
-  };
-
-  const togglePause = () => {
-    isPausedRef.current = !isPausedRef.current;
-  };
-
   return {
-    pause,
-    resume,
-    togglePause,
+    pause: () => { isPausedRef.current = true; },
+    resume: () => { isPausedRef.current = false; },
+    togglePause: () => { isPausedRef.current = !isPausedRef.current; },
     isPaused: isPausedRef.current,
   };
 };
