@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Vibration,
-} from 'react-native';
 import { GameState, DeviceInfo } from '../types/gameTypes';
-import { getResponsiveFontSize, getButtonSize } from '../utils/deviceUtils';
 
 interface GameUIProps {
   gameState: GameState;
@@ -26,388 +18,191 @@ const GameUI: React.FC<GameUIProps> = ({
   onExit,
   deviceInfo,
 }) => {
-  const handleButtonPress = (action: () => void) => {
-    Vibration.vibrate(30);
-    action();
-  };
-
-  const buttonSize = getButtonSize(deviceInfo);
+  const isTablet = deviceInfo.isTablet;
 
   return (
-    <View style={[
-      styles.container,
-      {
-        padding: deviceInfo.isTablet ? 20 : 15,
-      }
-    ]}>
+    <div style={{
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 100,
+      padding: isTablet ? '20px' : '15px',
+    }}>
       {/* Статистика игры */}
-      <View style={styles.statsContainer}>
-        <View style={styles.statItem}>
-          <Text style={[
-            styles.statLabel,
-            { fontSize: getResponsiveFontSize(12, deviceInfo) }
-          ]}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: 'rgba(26, 26, 46, 0.9)',
+        borderRadius: '15px',
+        padding: '12px 15px',
+        marginBottom: '20px',
+      }}>
+        <div style={{ textAlign: 'center', minWidth: '60px' }}>
+          <div style={{ color: '#4ECDC4', fontWeight: 'bold', fontSize: isTablet ? '14px' : '12px' }}>
             СЧЕТ
-          </Text>
-          <Text style={[
-            styles.statValue,
-            { fontSize: getResponsiveFontSize(24, deviceInfo) }
-          ]}>
+          </div>
+          <div style={{ color: '#FFF', fontWeight: '900', fontSize: isTablet ? '28px' : '24px' }}>
             {gameState.score}
-          </Text>
-        </View>
-        
-        <View style={styles.livesContainer}>
-          <Text style={[
-            styles.livesLabel,
-            { fontSize: getResponsiveFontSize(12, deviceInfo) }
-          ]}>
-            ЖИЗНИ:
-          </Text>
-          {Array.from({ length: gameState.lives }).map((_, index) => (
-            <View key={index} style={[
-              styles.lifeIcon,
-              deviceInfo.isTablet && styles.lifeIconTablet
-            ]} />
-          ))}
-        </View>
-        
-        <View style={styles.statItem}>
-          <Text style={[
-            styles.statLabel,
-            { fontSize: getResponsiveFontSize(12, deviceInfo) }
-          ]}>
-            УРОВЕНЬ
-          </Text>
-          <Text style={[
-            styles.statValue,
-            { fontSize: getResponsiveFontSize(24, deviceInfo) }
-          ]}>
-            {gameState.level}
-          </Text>
-        </View>
-      </View>
+          </div>
+        </div>
 
-      {/* Панель управления */}
-      <View style={[
-        styles.controlsContainer,
-        { marginTop: deviceInfo.isTablet ? 20 : 15 }
-      ]}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ color: '#4ECDC4', fontWeight: 'bold', fontSize: isTablet ? '14px' : '12px', marginRight: '10px' }}>
+            ЖИЗНИ:
+          </div>
+          {Array.from({ length: gameState.lives }).map((_, index) => (
+            <div key={index} style={{
+              width: isTablet ? '20px' : '16px',
+              height: isTablet ? '20px' : '16px',
+              borderRadius: '50%',
+              backgroundColor: '#FF6B6B',
+              margin: '0 3px',
+              border: '2px solid #FFF',
+            }} />
+          ))}
+        </div>
+
+        <div style={{ textAlign: 'center', minWidth: '60px' }}>
+          <div style={{ color: '#4ECDC4', fontWeight: 'bold', fontSize: isTablet ? '14px' : '12px' }}>
+            УРОВЕНЬ
+          </div>
+          <div style={{ color: '#FFF', fontWeight: '900', fontSize: isTablet ? '28px' : '24px' }}>
+            {gameState.level}
+          </div>
+        </div>
+      </div>
+
+      {/* Кнопки управления */}
+      <div style={{ textAlign: 'center' }}>
         {!gameState.isGameStarted ? (
-          <TouchableOpacity
-            style={[
-              styles.button,
-              styles.startButton,
-              buttonSize
-            ]}
-            onPress={() => handleButtonPress(onStart)}
-            activeOpacity={0.7}
+          <button
+            onClick={onStart}
+            style={{
+              backgroundColor: '#06D6A0',
+              color: '#FFF',
+              border: '2px solid #FFF',
+              borderRadius: '12px',
+              padding: isTablet ? '15px 30px' : '12px 24px',
+              fontSize: isTablet ? '20px' : '18px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              boxShadow: '0 3px 5px rgba(0,0,0,0.3)',
+            }}
           >
-            <Text style={[
-              styles.buttonText,
-              { fontSize: getResponsiveFontSize(18, deviceInfo) }
-            ]}>
-              ИГРАТЬ
-            </Text>
-          </TouchableOpacity>
+            ИГРАТЬ
+          </button>
         ) : (
-          <View style={styles.gameControls}>
-            <TouchableOpacity
-              style={[
-                styles.button,
-                styles.controlButton,
-                buttonSize
-              ]}
-              onPress={() => handleButtonPress(onPause)}
-              activeOpacity={0.7}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '15px' }}>
+            <button
+              onClick={onPause}
+              style={buttonStyle('#118AB2', isTablet)}
             >
-              <Text style={[
-                styles.buttonText,
-                { fontSize: getResponsiveFontSize(16, deviceInfo) }
-              ]}>
-                {gameState.isPaused ? '▶' : '⏸'}
-              </Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity
-              style={[
-                styles.button,
-                styles.resetButton,
-                buttonSize
-              ]}
-              onPress={() => handleButtonPress(onReset)}
-              activeOpacity={0.7}
+              {gameState.isPaused ? '▶' : '⏸'}
+            </button>
+            <button
+              onClick={onReset}
+              style={buttonStyle('#FFD166', isTablet)}
             >
-              <Text style={[
-                styles.buttonText,
-                { fontSize: getResponsiveFontSize(16, deviceInfo) }
-              ]}>
-                ↻
-              </Text>
-            </TouchableOpacity>
-          </View>
+              ↻
+            </button>
+          </div>
         )}
-      </View>
+      </div>
 
       {/* Сообщения о состоянии игры */}
-      {gameState.isGameOver && (
-        <View style={styles.messageOverlay}>
-          <View style={[
-            styles.messageContainer,
-            deviceInfo.isTablet && styles.messageContainerTablet
-          ]}>
-            <Text style={[
-              styles.gameOverText,
-              { fontSize: getResponsiveFontSize(32, deviceInfo) }
-            ]}>
-              КОНЕЦ ИГРЫ
-            </Text>
-            <Text style={[
-              styles.finalScoreText,
-              { fontSize: getResponsiveFontSize(20, deviceInfo) }
-            ]}>
-              Счет: {gameState.score}
-            </Text>
-            <Text style={[
-              styles.finalLevelText,
-              { fontSize: getResponsiveFontSize(16, deviceInfo) }
-            ]}>
-              Уровень: {gameState.level}
-            </Text>
-            
-            <View style={styles.gameOverButtons}>
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  styles.restartButton,
-                  { width: buttonSize.width * 1.5 }
-                ]}
-                onPress={() => handleButtonPress(onReset)}
-                activeOpacity={0.7}
-              >
-                <Text style={[
-                  styles.buttonText,
-                  { fontSize: getResponsiveFontSize(18, deviceInfo) }
-                ]}>
-                  ИГРАТЬ СНОВА
-                </Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  styles.exitButton,
-                  { width: buttonSize.width * 1.2 }
-                ]}
-                onPress={onExit}
-                activeOpacity={0.7}
-              >
-                <Text style={[
-                  styles.buttonText,
-                  { fontSize: getResponsiveFontSize(16, deviceInfo) }
-                ]}>
-                  ВЫЙТИ
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+      {(gameState.isGameOver || gameState.isPaused) && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 200,
+        }}>
+          <div style={{
+            backgroundColor: 'rgba(26, 26, 46, 0.95)',
+            borderRadius: '20px',
+            padding: isTablet ? '35px' : '25px',
+            textAlign: 'center',
+            border: '3px solid #4ECDC4',
+            minWidth: isTablet ? '300px' : '250px',
+          }}>
+            {gameState.isGameOver ? (
+              <>
+                <h2 style={{ color: '#EF476F', marginBottom: '15px', fontSize: isTablet ? '32px' : '28px' }}>
+                  КОНЕЦ ИГРЫ
+                </h2>
+                <p style={{ color: '#FFD166', fontSize: isTablet ? '22px' : '18px', marginBottom: '5px' }}>
+                  Счет: {gameState.score}
+                </p>
+                <p style={{ color: '#FFF', opacity: 0.8, marginBottom: '20px' }}>
+                  Уровень: {gameState.level}
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                  <button
+                    onClick={onReset}
+                    style={bigButtonStyle('#06D6A0', isTablet)}
+                  >
+                    ИГРАТЬ СНОВА
+                  </button>
+                  <button
+                    onClick={onExit}
+                    style={bigButtonStyle('#EF476F', isTablet)}
+                  >
+                    ВЫЙТИ
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 style={{ color: '#FFD166', marginBottom: '20px', fontSize: isTablet ? '28px' : '24px' }}>
+                  ПАУЗА
+                </h2>
+                <button
+                  onClick={onPause}
+                  style={bigButtonStyle('#4ECDC4', isTablet)}
+                >
+                  ПРОДОЛЖИТЬ
+                </button>
+              </>
+            )}
+          </div>
+        </div>
       )}
-
-      {gameState.isPaused && !gameState.isGameOver && (
-        <View style={styles.messageOverlay}>
-          <View style={[
-            styles.messageContainer,
-            deviceInfo.isTablet && styles.messageContainerTablet
-          ]}>
-            <Text style={[
-              styles.pauseText,
-              { fontSize: getResponsiveFontSize(28, deviceInfo) }
-            ]}>
-              ПАУЗА
-            </Text>
-            <TouchableOpacity
-              style={[
-                styles.button,
-                styles.resumeButton,
-                { width: buttonSize.width * 1.2 }
-              ]}
-              onPress={() => handleButtonPress(onPause)}
-              activeOpacity={0.7}
-            >
-              <Text style={[
-                styles.buttonText,
-                { fontSize: getResponsiveFontSize(18, deviceInfo) }
-              ]}>
-                ПРОДОЛЖИТЬ
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-    </View>
+    </div>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 100,
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: 'rgba(26, 26, 46, 0.9)',
-    borderRadius: 15,
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-  },
-  statItem: {
-    alignItems: 'center',
-    minWidth: 60,
-  },
-  statLabel: {
-    color: '#4ECDC4',
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  statValue: {
-    color: '#FFF',
-    fontWeight: '900',
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-  livesContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  livesLabel: {
-    color: '#4ECDC4',
-    fontWeight: 'bold',
-    marginRight: 10,
-  },
-  lifeIcon: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: '#FF6B6B',
-    marginHorizontal: 3,
-    borderWidth: 2,
-    borderColor: '#FFF',
-  },
-  lifeIconTablet: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-  },
-  controlsContainer: {
-    alignItems: 'center',
-  },
-  gameControls: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 15,
-  },
-  button: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 6,
-  },
-  startButton: {
-    backgroundColor: '#06D6A0',
-    borderWidth: 2,
-    borderColor: '#FFF',
-  },
-  controlButton: {
-    backgroundColor: '#118AB2',
-  },
-  resetButton: {
-    backgroundColor: '#FFD166',
-  },
-  resumeButton: {
-    backgroundColor: '#4ECDC4',
-    borderWidth: 2,
-    borderColor: '#FFF',
-  },
-  restartButton: {
-    backgroundColor: '#06D6A0',
-    borderWidth: 2,
-    borderColor: '#FFF',
-  },
-  exitButton: {
-    backgroundColor: '#EF476F',
-    borderWidth: 2,
-    borderColor: '#FFF',
-  },
-  buttonText: {
-    color: '#FFF',
-    fontWeight: 'bold',
-  },
-  messageOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 200,
-  },
-  messageContainer: {
-    backgroundColor: 'rgba(26, 26, 46, 0.95)',
-    borderRadius: 20,
-    padding: 25,
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: '#4ECDC4',
-    minWidth: 250,
-  },
-  messageContainerTablet: {
-    padding: 35,
-    minWidth: 300,
-  },
-  gameOverText: {
-    color: '#EF476F',
-    fontWeight: 'bold',
-    marginBottom: 15,
-    textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
-  },
-  finalScoreText: {
-    color: '#FFD166',
-    fontWeight: '600',
-    marginBottom: 5,
-  },
-  finalLevelText: {
-    color: '#FFF',
-    opacity: 0.8,
-    marginBottom: 20,
-  },
-  gameOverButtons: {
-    alignItems: 'center',
-    gap: 15,
-  },
-  pauseText: {
-    color: '#FFD166',
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
-  },
+const buttonStyle = (color: string, isTablet: boolean) => ({
+  backgroundColor: color,
+  color: '#FFF',
+  border: 'none',
+  borderRadius: '12px',
+  width: isTablet ? '60px' : '50px',
+  height: isTablet ? '60px' : '50px',
+  fontSize: isTablet ? '24px' : '20px',
+  fontWeight: 'bold',
+  cursor: 'pointer',
+  boxShadow: '0 3px 5px rgba(0,0,0,0.3)',
+});
+
+const bigButtonStyle = (color: string, isTablet: boolean) => ({
+  backgroundColor: color,
+  color: '#FFF',
+  border: '2px solid #FFF',
+  borderRadius: '12px',
+  padding: isTablet ? '15px 30px' : '12px 24px',
+  fontSize: isTablet ? '18px' : '16px',
+  fontWeight: 'bold',
+  cursor: 'pointer',
+  boxShadow: '0 3px 5px rgba(0,0,0,0.3)',
+  width: '100%',
 });
 
 export default GameUI;

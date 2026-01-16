@@ -1,21 +1,36 @@
 import { useState, useEffect } from 'react';
-import { Dimensions } from 'react-native';
 import { DeviceInfo } from '../types/gameTypes';
-import { getDeviceInfo } from '../utils/deviceUtils';
 
 export const useDeviceDetection = (): DeviceInfo => {
-  const [deviceInfo, setDeviceInfo] = useState<DeviceInfo>(getDeviceInfo());
+  const [deviceInfo, setDeviceInfo] = useState<DeviceInfo>({
+    isMobile: true,
+    isTablet: false,
+    screenWidth: 800,
+    screenHeight: 600,
+    platform: typeof window !== 'undefined' && /iPhone|iPad|iPod/.test(navigator.userAgent) ? 'ios' : 'android',
+    aspectRatio: 1.5,
+  });
 
   useEffect(() => {
     const updateDeviceInfo = () => {
-      setDeviceInfo(getDeviceInfo());
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const isTablet = width >= 768;
+      
+      setDeviceInfo({
+        isMobile: !isTablet,
+        isTablet,
+        screenWidth: width,
+        screenHeight: height,
+        platform: /iPhone|iPad|iPod/.test(navigator.userAgent) ? 'ios' : 'android',
+        aspectRatio: height / width,
+      });
     };
 
-    const subscription = Dimensions.addEventListener('change', updateDeviceInfo);
+    updateDeviceInfo();
+    window.addEventListener('resize', updateDeviceInfo);
     
-    return () => {
-      subscription.remove();
-    };
+    return () => window.removeEventListener('resize', updateDeviceInfo);
   }, []);
 
   return deviceInfo;
